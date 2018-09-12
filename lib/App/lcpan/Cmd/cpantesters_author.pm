@@ -20,7 +20,7 @@ $SPEC{handle_cmd} = {
     description => <<'_',
 
 Given author with CPAN ID `CPANID`, this will open
-`https://matrix.cpantesters.org/?author=CPANID`. `CPANID` will first be checked for
+`http://matrix.cpantesters.org/?author=CPANID`. `CPANID` will first be checked for
 existence in local index database.
 
 _
@@ -45,7 +45,7 @@ sub handle_cmd {
         };
 
         require Browser::Open;
-        my $url = "https://matrix.cpantesters.org/?author=$cpanid";
+        my $url = "http://matrix.cpantesters.org/?author=$cpanid";
         my $err = Browser::Open::open_browser($url);
         if ($err) {
             $envres->add_result(500, "Can't open browser for URL $url");

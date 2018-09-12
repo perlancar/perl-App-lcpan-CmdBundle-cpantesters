@@ -20,7 +20,7 @@ $SPEC{handle_cmd} = {
     description => <<'_',
 
 Given distribution `DIST`, this will open
-`https://matrix.cpantesters.org/?dist=DIST`. `DIST` will first be checked for
+`http://matrix.cpantesters.org/?dist=DIST`. `DIST` will first be checked for
 existence in local index database.
 
 _
@@ -46,7 +46,7 @@ sub handle_cmd {
         };
 
         require Browser::Open;
-        my $url = "https://matrix.cpantesters.org/?dist=$dist"; # XXX %20$version
+        my $url = "http://matrix.cpantesters.org/?dist=$dist"; # XXX %20$version
         my $err = Browser::Open::open_browser($url);
         if ($err) {
             $envres->add_result(500, "Can't open browser for URL $url");
