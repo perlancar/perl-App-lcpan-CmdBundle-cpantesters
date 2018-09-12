@@ -1,4 +1,4 @@
-package App::lcpan::Cmd::cpantesters_dist;
+package App::lcpan::Cmd::cpantesters_author;
 
 # DATE
 # VERSION
@@ -16,18 +16,17 @@ our %SPEC;
 
 $SPEC{handle_cmd} = {
     v => 1.1,
-    summary => 'Open distribution page on CPAN Testers matrix',
+    summary => 'Open author page on CPAN Testers matrix',
     description => <<'_',
 
-Given distribution `DIST`, this will open
-`https://matrix.cpantesters.org/?dist=DIST`. `DIST` will first be checked for
+Given author with CPAN ID `CPANID`, this will open
+`https://matrix.cpantesters.org/?author=CPANID`. `CPANID` will first be checked for
 existence in local index database.
 
 _
     args => {
         %App::lcpan::common_args,
-        %App::lcpan::dists_args,
-        # XXX version
+        %App::lcpan::authors_args,
     },
 };
 sub handle_cmd {
@@ -37,16 +36,16 @@ sub handle_cmd {
     my $dbh = $state->{dbh};
 
     my $envres = envresmulti();
-    for my $dist (@{ $args{dists} }) {
-        my ($file_id, $cpanid, $version) = $dbh->selectrow_array(
-            "SELECT file_id, cpanid, version FROM dist WHERE name=? AND is_latest", {}, $dist);
-        $file_id or do {
-            $envres->add_result(404, "No such dist '$dist'");
+    for my $author (@{ $args{authors} }) {
+        my ($cpanid) = $dbh->selectrow_array(
+            "SELECT cpanid FROM author WHERE cpanid=?", {}, uc $author);
+        defined $cpanid or do {
+            $envres->add_result(404, "No such author '$author'");
             next;
         };
 
         require Browser::Open;
-        my $url = "https://matrix.cpantesters.org/?dist=$dist"; # XXX %20$version
+        my $url = "https://matrix.cpantesters.org/?author=$cpanid";
         my $err = Browser::Open::open_browser($url);
         if ($err) {
             $envres->add_result(500, "Can't open browser for URL $url");
